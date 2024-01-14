@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coin Prices</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Coin Prices Today</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Coin</th>
+          <th>Price (USD)</th>
+          <th>Network Difficulty</th>
+        </tr>
+      </thead>
+      <tbody id="coinTableBody"></tbody>
+    </table>
+
+    <script>
+      const coinsToSearch = [
+        "aves",
+        "dydx",
+        "callisto",
+        "ny-blockchain",
+        "Dogether",
+        "OctaSpace",
+        "Disney",
+        "egaz",
+        "Canxium",
+        "bitnet",
+        "PowBlocks",
+      ];
+
+      const networkDifficulty = {
+        aves: "2,137,675M",
+        dydx: "",
+        callisto: "949,689M",
+        blockchain: "",
+        Dogether: "12,133,010M ",
+        OctaSpace: "39,138,903M",
+        Disney: "",
+        egaz: "1,377,401M",
+        Canxium: "16,175,259M",
+        bitnet: "11,227,220M",
+        PowBlocks: "44,811,412M",
+      };
+
+      fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinsToSearch.join(",")}&vs_currencies=usd`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((prices) => {
+          const coinTableBody = document.getElementById("coinTableBody");
+
+          for (const coin in prices) {
+            const price = prices[coin].usd;
+            const difficulty = networkDifficulty[coin] || "N/A";
+
+            const row = document.createElement("tr");
+            const coinCell = document.createElement("td");
+            const priceCell = document.createElement("td");
+            const difficultyCell = document.createElement("td");
+
+            coinCell.textContent = coin;
+            priceCell.textContent = price;
+            difficultyCell.textContent = difficulty;
+
+            row.appendChild(coinCell);
+            row.appendChild(priceCell);
+            row.appendChild(difficultyCell);
+
+            coinTableBody.appendChild(row);
+          }
+        })
+        .catch((error) => {
+          console.error("Fetch error:", error);
+        });
+    </script>
+  </body>
+</html>
